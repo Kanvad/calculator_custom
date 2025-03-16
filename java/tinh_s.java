@@ -8,46 +8,53 @@ public class tinh_s extends JFrame {
     private JTable table;
     private DefaultTableModel model;
 
+    // Tạo biến
+    double numN = 0.0;
+    int soHang = 0;
+    double numX = 0.0;
+    double soMu = 0.0;
+    double numS2 = 0.0;
+    
     public tinh_s() {
         setTitle("Tính S");
         setSize(600, 600);
         setLocation(400, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
+        
 
         // Tạo các component
         JLabel lbln = new JLabel("Nhập n: ");
         lbln.setBounds(25, 25, 100, 25);
         JTextField txtn = new JTextField(10);
         txtn.setBounds(75, 25, 100, 25);
-        JLabel lblSomu = new JLabel("So mu: ");
+        JLabel lblSomu = new JLabel("Số mũ: ");
         lblSomu.setBounds(25, 75, 100, 25);
         JTextField txtSomu = new JTextField(10);
         txtSomu.setBounds(75, 75, 100, 25);
+        JLabel lblSoHang = new JLabel("Số hàng:");
+        lblSoHang.setBounds(200, 75, 75, 25);
         JTextField txtSoHang = new JTextField(10);
-        JLabel lblSoHang = new JLabel("So hang:");
-        lblSoHang.setBounds(200, 75, 50, 25);
-        txtSoHang.setBounds(250, 75, 100, 25);
-        JButton btnThem = new JButton("Them");
+        txtSoHang.setBounds(275, 75, 100, 25);
+        JButton btnThem = new JButton("Thêm");
         btnThem.setBounds(200, 25, 100, 25);
         JButton btnExit = new JButton("Exit");
         btnExit.setBounds(475, 25, 100, 25);
-        JButton btnTinh = new JButton("Tinh");
-        btnTinh.setBounds(350, 25, 100, 25);
-
-        // Result x
-        JLabel lblTinhX = new JLabel("Ket qua:");
-        lblTinhX.setBounds(25, 450, 100, 25);
+        JButton btnTinh = new JButton("Tính x");
+//        btnTinh.setBounds(350, 25, 100, 25);
+        btnTinh.setBounds(25, 450, 100, 25);
+        
+        // Tinh x
         JTextField txtTinhX = new JTextField(10);
-        txtTinhX.setBounds(75, 450, 100, 25);
+        txtTinhX.setBounds(25, 475, 100, 25);
 
         // Tinh S^2 va S
-        JButton btnTinhS = new JButton("Tinh S^2 va S");
-        btnTinhS.setBounds(200, 450, 100, 25);
+        JButton btnTinhS = new JButton("Tính S^2 và S");
+        btnTinhS.setBounds(200, 450, 150, 25);
         JTextField txtTinhS = new JTextField(10);
-        txtTinhS.setBounds(300, 450, 100, 25);
+        txtTinhS.setBounds(300, 475, 100, 25);
         JTextField txtTinhS2 = new JTextField(10);
-        txtTinhS2.setBounds(400, 450, 100, 25);
+        txtTinhS2.setBounds(200, 475, 100, 25);
 
         // Tạo tabbed pane
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -58,10 +65,10 @@ public class tinh_s extends JFrame {
 
         // Tạo table model và table
         model = new DefaultTableModel();
-        model.addColumn("STT");
-        model.addColumn("Chieu cao");
-        model.addColumn("So mu");
-        model.addColumn("So luong");
+//        model.addColumn("STT");
+        model.addColumn("Chiều cao");
+//        model.addColumn("So mu");
+        model.addColumn("Số lượng");
         table = new JTable(model);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -79,12 +86,14 @@ public class tinh_s extends JFrame {
         btnThem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int soDong = Integer.parseInt(txtSoHang.getText());
+            	numN = Double.parseDouble(txtn.getText());
+                soHang = Integer.parseInt(txtSoHang.getText());
+                soMu = Double.parseDouble(txtSomu.getText());
 
-                for (int i = 0; i < soDong; i++) {
+                for (int i = 0; i < soHang; i++) {
                     Object[] row = new Object[4];
-                    row[0] = i + 1;
-                    row[2] = txtSomu.getText(); // Đặt giá trị mặc định cho cột 3
+//                    row[0] = i + 1;
+//                    row[2] = txtSomu.getText();
                     model.addRow(row);
                 }
 
@@ -97,40 +106,31 @@ public class tinh_s extends JFrame {
         btnTinh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int rows = table.getRowCount();
-                int cols = table.getColumnCount();
 
-                // Lặp qua từng hàng và cột
+                // Lặp qua từng hàng
                 Double sum = 0.0;
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < cols; j++) {
-                        Object value = table.getValueAt(i, j);
-                        if (j == 3) {
-                            sum += Double.parseDouble(value.toString()) * Double.parseDouble(table.getValueAt(i, 1).toString());
-                        }
-                    }
+                for (int i = 0; i < soHang; i++) {
+                	sum += Double.parseDouble(table.getValueAt(i, 0).toString()) * Double.parseDouble(table.getValueAt(i, 1).toString());
                 }
-                txtTinhX.setText(String.format("%.2f", sum/Double.parseDouble(txtn.getText())));
+                numX = Double.parseDouble(String.format("%.2f", sum/numN));
+                txtTinhX.setText(String.valueOf(numX));
             }
         });
 
         btnTinhS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int rows = table.getRowCount();
 
                 // Lặp qua từng hàng
                 Double sumS2 = 0.0;
-                Double numX = Double.parseDouble(txtTinhX.getText());
-                Double numSomu = Double.parseDouble(txtSomu.getText());
-
-                for (int i = 1; i < rows; i++) {
-                    Object value = table.getValueAt(i, 3);
-                    sumS2 += (Math.pow((Double.parseDouble(table.getValueAt(i, 1).toString()) - numX), numSomu)) * Double.parseDouble(value.toString());
+                for (int i = 0; i < soHang; i++) {
+                    sumS2 += ((Math.pow((Double.parseDouble(table.getValueAt(i, 0).toString()) - numX), soMu)) * Double.parseDouble(table.getValueAt(i, 1).toString()));
+//                    System.out.println(sumS2);
                 }
-                Double sumS2new = sumS2 / Double.parseDouble(txtn.getText());
-                txtTinhS2.setText(String.format("%.2f", sumS2new));
-                txtTinhS.setText(String.format("%.2f", Math.sqrt(sumS2new)));
+                numS2 = sumS2 / numN;
+                txtTinhS2.setText(String.format("%.2f", numS2));
+                txtTinhS.setText(String.format("%.2f", Math.sqrt(numS2)));
+                System.out.println(numS2 + "///" + Math.sqrt(numS2));
 
             }
         });
@@ -146,7 +146,6 @@ public class tinh_s extends JFrame {
         add(btnThem);
         add(btnExit);
         add(btnTinh);
-        add(lblTinhX);
         add(txtTinhX);
         add(btnTinhS);
         add(txtTinhS);
